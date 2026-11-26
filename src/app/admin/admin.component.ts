@@ -1,27 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
+// The real admin area is the server-side page at /api/admin.php (password checked on the server).
+// This route only forwards there so old /adminlogin links keep working.
 @Component({
   selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+  template: '<p style="text-align:center;margin:40px">Opening admin… <a href="/api/admin.php">continue</a></p>',
 })
-export class AdminComponent {
-  username: string = '';
-  password: string = '';
-  errorMessage: string = '';
+export class AdminComponent implements OnInit {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
-  constructor() {}
-
-  login() {
-    // Check if the entered credentials match the hardcoded values
-    if (this.username === 'Raaj Tomar' && this.password === 'Indian@108') {
-      // Credentials are correct, perform login logic here
-      console.log('Login successful!');
-      // You can redirect the user or perform any other action upon successful login
-    } else {
-      // Credentials are incorrect, display an error message
-      this.errorMessage = 'Invalid username or password. Please try again.';
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.location.replace('/api/admin.php');
     }
   }
 }
-

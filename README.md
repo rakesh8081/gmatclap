@@ -1,27 +1,51 @@
-# Gmatclap
+# gmatclap.com
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
+Website for GMATclap (GMAT coaching and MBA admissions consulting). Hosted on Hostinger shared hosting (Premium plan).
 
-## Development server
+## How the live site works
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+| Part | Where it lives | What it is |
+|---|---|---|
+| Website pages | `src/` → built into `public_html/` | Angular 17 app, pre-rendered to plain HTML at build time |
+| Enquiry backend + admin | `backend/api/` → `public_html/api/` | Small PHP 8.1 scripts |
+| Enquiry data | `domains/gmatclap.com/gmatclap-data/site.sqlite` | SQLite file **outside** `public_html`, created automatically |
+| gmatclap.in | `backend/gmatclap.in/.htaccess` | Old WordPress landing page, now 301-redirected to gmatclap.com |
 
-## Code scaffolding
+There is no Node server in production. `server.ts` (Angular SSR) is only used during the build to pre-render pages.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Enquiry forms
 
-## Build
+The **Enquiry Now** (`/enquiry`) and **Contact Us** (`/contactus`) forms post JSON to `/api/enquiry.php`, which:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- validates name, email and phone
+- blocks simple bots (hidden `website` field) and floods (3 per email / 10 per IP per 10 minutes)
+- saves the enquiry and emails a notification to gmatclap@gmail.com
 
-## Running unit tests
+### Admin
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+`https://gmatclap.com/api/admin.php` – view, search, change status, delete, and download all enquiries as CSV.
+The password is set on first visit with the one-time `SETUP_CODE` in `backend/api/admin.php`; after that it is stored only as a hash.
+`/adminlogin` just forwards to this page.
 
-## Running end-to-end tests
+## Building and deploying
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```bash
+npm install
+npx ng build          # output: dist/gmatclap/browser/
+```
 
-## Further help
+Upload to Hostinger (hPanel → File Manager, or FTP):
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+1. Contents of `dist/gmatclap/browser/` → `public_html/`
+2. `backend/api/` → `public_html/api/` (keep its `.htaccess`)
+
+Then clear the cache: hPanel → Websites → gmatclap.com → Cache Manager (or the Hostinger API `hosting_cache_clear`).
+
+Never delete `domains/gmatclap.com/gmatclap-data/` – it holds all enquiries.
+
+## History
+
+- May 2024: original site built by Srinath Pannala ([srinathpannala/gmatclap](https://github.com/srinathpannala/gmatclap)). Forms pointed at a `localhost:8080` Java backend that was never deployed, so no enquiries were saved.
+- Nov 2026: PHP enquiry backend + admin page added, forms fixed, hard-coded admin password removed from the frontend, gmatclap.in redirected to gmatclap.com.
+
+The live `main-P3ADUMPJ.js` on the server was patched directly (2026-11-26) to use `/api/enquiry.php`, because the site could not be rebuilt at the time. The next `ng build` from this repo replaces it with the same fix built in.

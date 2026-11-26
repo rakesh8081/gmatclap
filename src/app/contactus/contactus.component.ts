@@ -14,7 +14,7 @@ export class ContactusComponent {
   constructor(private http: HttpClient) {}
 
   submitForm() {
-    this.http.post<any>('http://localhost:8080/enquiries/', this.formData).subscribe(
+    this.http.post<any>('/api/enquiry.php', this.formData).subscribe(
       response => {
         console.log(response);
         alert('Enquiry submitted successfully!');
