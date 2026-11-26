@@ -29,17 +29,23 @@ The password is set on first visit with the one-time `SETUP_CODE` in `backend/ap
 
 ## Building and deploying
 
+Push to `main`. GitHub Actions (`.github/workflows/build-deploy.yml`) then:
+
+1. runs `npm ci` and `ng build` (every page is pre-rendered to HTML)
+2. checks the PHP files
+3. assembles `public_html`: the built site + `backend/api/` as `api/` + `deploy/.htaccess`
+4. publishes it to the **`deploy` branch** (never edit that branch by hand)
+
+Hostinger auto-deploys the `deploy` branch into `public_html`. If the build fails, nothing is published and the live site is unchanged. Check progress under the repo's **Actions** tab.
+
+After a deploy, clear the cache if a change doesn't show: hPanel → Websites → gmatclap.com → Cache Manager.
+
+Local development:
+
 ```bash
 npm install
-npx ng build          # output: dist/gmatclap/browser/
+npx ng serve          # http://localhost:4200 (forms need the PHP api, so test them on the live site)
 ```
-
-Upload to Hostinger (hPanel → File Manager, or FTP):
-
-1. Contents of `dist/gmatclap/browser/` → `public_html/`
-2. `backend/api/` → `public_html/api/` (keep its `.htaccess`)
-
-Then clear the cache: hPanel → Websites → gmatclap.com → Cache Manager (or the Hostinger API `hosting_cache_clear`).
 
 Never delete `domains/gmatclap.com/gmatclap-data/` – it holds all enquiries.
 

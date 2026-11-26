@@ -1,0 +1,8 @@
+# Root .htaccess for public_html (copied in by the build workflow).
+# Hostinger's Git deploy keeps a .git folder in public_html: never serve it or other dotfiles.
+RedirectMatch 404 /\.(git|github)(/|$)
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

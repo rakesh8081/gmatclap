@@ -1,0 +1,61 @@
+# Builds the site on every push to main and publishes the ready-to-serve files
+# (Angular pages + PHP api/) to the `deploy` branch.
+# Hostinger auto-deploys the `deploy` branch into public_html.
+# If the build fails, nothing is published and the live site stays as it is.
+name: Build and publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build Angular (pre-renders every page)
+        run: npx ng build --configuration production
+
+      - name: Check PHP files
+        run: for f in backend/api/*.php; do php -l "$f"; done
+
+      - name: Assemble public_html
+        run: |
+          mkdir -p out
+          cp -r dist/gmatclap/browser/. out/
+          mkdir -p out/api
+          cp -r backend/api/. out/api/
+          cp deploy/.htaccess out/.htaccess
+          test -f out/index.html
+          test -f out/enquiry/index.html
+          test -f out/api/enquiry.php
+          if grep -rl "localhost:8080/enquiries" out; then echo "Enquiry form still points at localhost"; exit 1; fi
+          echo "Files to publish:"; find out -maxdepth 2 | sort | head -80
+
+      - name: Publish to deploy branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: deploy
+          publish_dir: ./out
+          force_orphan: true
+          enable_jekyll: true
+          user_name: github-actions[bot]
+          user_email: 41898299+github-actions[bot]@users.noreply.github.com
+          commit_message: "Build from ${{ github.sha }}"
