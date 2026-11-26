@@ -1,0 +1,31 @@
+.results-hero {
+  text-align: center;
+  padding: 36px 16px 8px;
+}
+
+.results-hero h1 {
+  color: rgb(164, 18, 18);
+  font-weight: 700;
+}
+
+.results-hero p {
+  color: #555;
+  max-width: 640px;
+  margin: 8px auto 0;
+}
+
+.results-cta {
+  text-align: center;
+  background: #f7f2f2;
+  padding: 32px 16px 36px;
+  margin-top: 16px;
+}
+
+.cta-btn {
+  margin: 8px 6px 0;
+}
+
+.btn-primary {
+  background: rgb(164, 18, 18);
+  border-color: rgb(164, 18, 18);
+}

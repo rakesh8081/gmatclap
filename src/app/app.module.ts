@@ -27,6 +27,8 @@ import { EnquiryComponent } from './enquiry/enquiry.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UniversitiesComponent } from './universities/universities.component';
 import { AdminComponent } from './admin/admin.component';
+import { ResultsComponent } from './results/results.component';
+import { ResultsGridComponent } from './results/results-grid.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { AdminComponent } from './admin/admin.component';
     StudentRegisterComponent,
     EnquiryComponent,
     UniversitiesComponent,
-    AdminComponent
+    AdminComponent,
+    ResultsComponent,
+    ResultsGridComponent
   ],
   imports: [
     BrowserModule,

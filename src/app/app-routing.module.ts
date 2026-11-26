@@ -17,6 +17,7 @@ import { ContactusComponent } from './contactus/contactus.component';
 import { StudentRegisterComponent } from './student-register/student-register.component';
 import { UniversitiesComponent } from './universities/universities.component';
 import { AdminComponent } from './admin/admin.component';
+import { ResultsComponent } from './results/results.component';
 // import { EnquiryComponent } from './enquiry/enquiry.component';
 
 
@@ -41,6 +42,7 @@ const routes: Routes = [
   {path :'studentRegistration',component:StudentRegisterComponent},
   {path: 'universities',component:UniversitiesComponent},
   {path: 'adminlogin',component:AdminComponent},
+  {path: 'results', component:ResultsComponent},
   
   
   

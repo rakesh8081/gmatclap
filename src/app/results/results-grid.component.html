@@ -1,0 +1,30 @@
+<div class="results-grid">
+  <div class="result-card" *ngFor="let r of results">
+    <div class="score" *ngIf="r.score; else admitBadge">
+      <span class="label">GMAT</span>
+      <span class="value">{{ r.score }}</span>
+    </div>
+    <ng-template #admitBadge>
+      <div class="score admit"><span class="label">Admit</span></div>
+    </ng-template>
+
+    <img
+      *ngIf="r.photo; else initialsBlock"
+      class="photo"
+      [src]="'assets/images/results/' + r.photo"
+      [alt]="r.name + ', GMATclap student'"
+      width="120"
+      height="120"
+      loading="lazy"
+    />
+    <ng-template #initialsBlock>
+      <div class="photo initials" aria-hidden="true">{{ initials(r.name) }}</div>
+    </ng-template>
+
+    <h3 class="name">{{ r.name }}</h3>
+    <p class="background" *ngIf="r.background">{{ r.background }}</p>
+    <p class="school" *ngIf="r.school">
+      <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> {{ r.school }}
+    </p>
+  </div>
+</div>
