@@ -19,6 +19,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FTP_ENABLED: ${{ secrets.FTP_PASSWORD != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,3 +61,25 @@ jobs:
           user_name: github-actions[bot]
           user_email: 41898299+github-actions[bot]@users.noreply.github.com
           commit_message: "Build from ${{ github.sha }}"
+
+      # Upload to Hostinger public_html over FTPS.
+      # Needs repo secrets FTP_USERNAME and FTP_PASSWORD (an FTP account whose folder is gmatclap.com/public_html).
+      # Only changed files are uploaded. Files this action never uploaded (e.g. anything added by hand) are left alone.
+      # Enquiry data lives outside public_html and is never touched.
+      - name: Upload to Hostinger
+        if: env.FTP_ENABLED == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.gmatclap.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./out/
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+
+      - name: Upload skipped
+        if: env.FTP_ENABLED != 'true'
+        run: echo "::warning::FTP_USERNAME / FTP_PASSWORD secrets are not set, so the site was built but not uploaded."

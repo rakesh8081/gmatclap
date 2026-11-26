@@ -34,9 +34,10 @@ Push to `main`. GitHub Actions (`.github/workflows/build-deploy.yml`) then:
 1. runs `npm ci` and `ng build` (every page is pre-rendered to HTML)
 2. checks the PHP files
 3. assembles `public_html`: the built site + `backend/api/` as `api/` + `deploy/.htaccess`
-4. publishes it to the **`deploy` branch** (never edit that branch by hand)
+4. publishes it to the **`deploy` branch** (a record of exactly what went live; never edit it by hand)
+5. uploads changed files to Hostinger `public_html` over FTPS, using the repo secrets `FTP_USERNAME` and `FTP_PASSWORD` (a Hostinger FTP account whose folder is gmatclap.com's `public_html`)
 
-Hostinger auto-deploys the `deploy` branch into `public_html`. If the build fails, nothing is published and the live site is unchanged. Check progress under the repo's **Actions** tab.
+If the build fails, nothing is uploaded and the live site is unchanged. Check progress under the repo's **Actions** tab; **Run workflow** there re-deploys without a code change.
 
 After a deploy, clear the cache if a change doesn't show: hPanel → Websites → gmatclap.com → Cache Manager.
 
