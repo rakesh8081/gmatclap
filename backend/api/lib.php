@@ -42,6 +42,18 @@ function db(): PDO
         user_agent  TEXT,
         status      TEXT NOT NULL DEFAULT 'new'
     )");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS profiles (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_at  TEXT NOT NULL,
+        name        TEXT NOT NULL,
+        email       TEXT NOT NULL,
+        phone       TEXT NOT NULL,
+        city        TEXT,
+        data        TEXT NOT NULL,
+        ip          TEXT,
+        user_agent  TEXT,
+        status      TEXT NOT NULL DEFAULT 'new'
+    )");
     $pdo->exec("CREATE TABLE IF NOT EXISTS settings (k TEXT PRIMARY KEY, v TEXT)");
     $pdo->exec("CREATE TABLE IF NOT EXISTS login_attempts (ip TEXT, at INTEGER)");
     return $pdo;
@@ -116,5 +128,34 @@ function notify_new_enquiry(array $e): void
         $headers[] = 'Reply-To: ' . $e['email'];
     }
     // Best effort: the enquiry is already saved even if the email fails.
+    @mail(NOTIFY_EMAIL, '=?UTF-8?B?' . base64_encode($subject) . '?=', implode("\r\n", $lines), implode("\r\n", $headers));
+}
+
+// Labels for the profile-evaluation fields, in display order (used by email and admin).
+const PROFILE_FIELDS = [
+    'name' => 'Name', 'email' => 'Email', 'phone' => 'Phone', 'city' => 'City',
+    'degree' => 'Degree', 'college' => 'College', 'grad_year' => 'Graduation year',
+    'work_years' => 'Work experience (years)', 'role' => 'Current role / company', 'industry' => 'Industry',
+    'gmat_status' => 'GMAT status', 'gmat_score' => 'GMAT score', 'target_score' => 'Target score', 'test_date' => 'Planned test month',
+    'programs' => 'Programs', 'countries' => 'Countries', 'schools' => 'Target schools', 'intake' => 'Target intake',
+    'services' => 'Interested in', 'notes' => 'Notes',
+];
+
+function notify_new_profile(array $p, string $created): void
+{
+    $subject = 'New profile evaluation request from ' . $p['name'] . ' (' . SITE_NAME . ' website)';
+    $lines = ['A student asked for a free profile evaluation on gmatclap.com.', ''];
+    foreach (PROFILE_FIELDS as $k => $label) {
+        if (($p[$k] ?? '') !== '') {
+            $lines[] = str_pad($label . ':', 26) . $p[$k];
+        }
+    }
+    $lines[] = '';
+    $lines[] = 'Submitted: ' . $created . ' IST';
+    $lines[] = 'All requests: https://gmatclap.com/api/admin.php?view=profiles';
+    $headers = ['From: ' . SITE_NAME . ' Website <' . MAIL_FROM . '>', 'Content-Type: text/plain; charset=UTF-8'];
+    if (filter_var($p['email'], FILTER_VALIDATE_EMAIL)) {
+        $headers[] = 'Reply-To: ' . $p['email'];
+    }
     @mail(NOTIFY_EMAIL, '=?UTF-8?B?' . base64_encode($subject) . '?=', implode("\r\n", $lines), implode("\r\n", $headers));
 }

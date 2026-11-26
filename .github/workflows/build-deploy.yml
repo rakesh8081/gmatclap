@@ -47,6 +47,8 @@ jobs:
           test -f out/index.html
           test -f out/enquiry/index.html
           test -f out/results/index.html
+          test -f out/free-profile-evaluation/index.html
+          test -f out/api/profile.php
           test -f out/api/enquiry.php
           if grep -rl "localhost:8080/enquiries" out; then echo "Enquiry form still points at localhost"; exit 1; fi
           echo "Files to publish:"; find out -maxdepth 2 | sort | head -80

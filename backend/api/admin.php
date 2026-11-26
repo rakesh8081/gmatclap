@@ -23,6 +23,8 @@ $post = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 $action = (string)($_POST['action'] ?? $_GET['action'] ?? '');
 $msg = '';
 $err = '';
+$view = (($_GET['view'] ?? $_POST['view'] ?? '') === 'profiles') ? 'profiles' : 'enquiries';
+$table = $view; // whitelisted above: 'enquiries' or 'profiles'
 
 function check_csrf(string $csrf): void
 {
@@ -94,12 +96,25 @@ if ($loggedIn && $post && $action === 'logout') {
 // ---------- actions when logged in ----------
 if ($loggedIn) {
     if ($action === 'export') {
-        $rows = db()->query('SELECT id, created_at, name, email, phone, city, queries, source, status FROM enquiries ORDER BY id DESC')->fetchAll();
+        if ($view === 'profiles') {
+            $head = array_merge(['ID', 'Date (IST)'], array_values(PROFILE_FIELDS), ['Status']);
+            $rows = [];
+            foreach (db()->query('SELECT id, created_at, data, status FROM profiles ORDER BY id DESC') as $r) {
+                $d = json_decode($r['data'], true) ?: [];
+                $row = [$r['id'], $r['created_at']];
+                foreach (array_keys(PROFILE_FIELDS) as $k) $row[] = $d[$k] ?? '';
+                $row[] = $r['status'];
+                $rows[] = $row;
+            }
+        } else {
+            $head = ['ID', 'Date (IST)', 'Name', 'Email', 'Phone', 'City', 'Query', 'Page', 'Status'];
+            $rows = db()->query('SELECT id, created_at, name, email, phone, city, queries, source, status FROM enquiries ORDER BY id DESC')->fetchAll();
+        }
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="gmatclap-enquiries-' . date('Y-m-d') . '.csv"');
+        header('Content-Disposition: attachment; filename="gmatclap-' . $view . '-' . date('Y-m-d') . '.csv"');
         $out = fopen('php://output', 'w');
         fwrite($out, "\xEF\xBB\xBF"); // so Excel shows Indian names / symbols correctly
-        fputcsv($out, ['ID', 'Date (IST)', 'Name', 'Email', 'Phone', 'City', 'Query', 'Page', 'Status']);
+        fputcsv($out, $head);
         foreach ($rows as $r) {
             // Stop spreadsheet apps treating text as a formula.
             $r = array_map(fn($v) => is_string($v) && preg_match('/^[=+\-@]/', $v) ? "'" . $v : $v, $r);
@@ -112,11 +127,11 @@ if ($loggedIn) {
         $id = (int)($_POST['id'] ?? 0);
         if ($action === 'status') {
             $status = in_array($_POST['status'] ?? '', ['new', 'contacted', 'enrolled', 'not interested'], true) ? $_POST['status'] : 'new';
-            db()->prepare('UPDATE enquiries SET status = ? WHERE id = ?')->execute([$status, $id]);
+            db()->prepare("UPDATE $table SET status = ? WHERE id = ?")->execute([$status, $id]);
             $msg = 'Status updated.';
         } elseif ($action === 'delete') {
-            db()->prepare('DELETE FROM enquiries WHERE id = ?')->execute([$id]);
-            $msg = 'Enquiry deleted.';
+            db()->prepare("DELETE FROM $table WHERE id = ?")->execute([$id]);
+            $msg = 'Deleted.';
         } elseif ($action === 'password') {
             $p1 = (string)($_POST['password'] ?? '');
             if (!password_verify((string)($_POST['current'] ?? ''), $hash)) {
@@ -161,6 +176,11 @@ function page_top(string $title): void
     .stat b{display:block;font-size:22px}
     .tablewrap{overflow-x:auto;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
     details summary{cursor:pointer;color:#a41212}
+    .tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid #e5e5e5}
+    .tab{padding:10px 16px;text-decoration:none;color:#555;font-weight:600;border-bottom:3px solid transparent;margin-bottom:-2px}
+    .tab.on{color:#a41212;border-bottom-color:#a41212}
+    .badge{background:#a41212;color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;margin-left:4px}
+    table.kv{margin-top:6px;font-size:13px}table.kv th{background:none;color:#666;font-weight:600;padding:3px 8px 3px 0;white-space:nowrap;border:0}table.kv td{padding:3px 0;border:0;white-space:normal}
     </style></head><body>';
 }
 
@@ -190,57 +210,79 @@ $fs = clean($_GET['status'] ?? '', 20);
 $where = [];
 $args = [];
 if ($q !== '') {
-    $where[] = '(name LIKE ? OR email LIKE ? OR phone LIKE ? OR city LIKE ? OR queries LIKE ?)';
+    $where[] = '(name LIKE ? OR email LIKE ? OR phone LIKE ? OR city LIKE ? OR ' . ($view === 'profiles' ? 'data' : 'queries') . ' LIKE ?)';
     array_push($args, ...array_fill(0, 5, '%' . $q . '%'));
 }
 if ($fs !== '') {
     $where[] = 'status = ?';
     $args[] = $fs;
 }
-$sql = 'SELECT * FROM enquiries' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY id DESC LIMIT 500';
+$sql = "SELECT * FROM $table" . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY id DESC LIMIT 500';
 $st = db()->prepare($sql);
 $st->execute($args);
 $rows = $st->fetchAll();
 
 $counts = ['total' => 0, 'new' => 0, 'week' => 0];
-$counts['total'] = (int)db()->query('SELECT COUNT(*) FROM enquiries')->fetchColumn();
-$counts['new'] = (int)db()->query("SELECT COUNT(*) FROM enquiries WHERE status = 'new'")->fetchColumn();
-$wk = db()->prepare('SELECT COUNT(*) FROM enquiries WHERE created_at >= ?');
+$counts['total'] = (int)db()->query("SELECT COUNT(*) FROM $table")->fetchColumn();
+$counts['new'] = (int)db()->query("SELECT COUNT(*) FROM $table WHERE status = 'new'")->fetchColumn();
+$wk = db()->prepare("SELECT COUNT(*) FROM $table WHERE created_at >= ?");
 $wk->execute([date('Y-m-d H:i:s', time() - 7 * 86400)]);
 $counts['week'] = (int)$wk->fetchColumn();
+$otherNew = (int)db()->query("SELECT COUNT(*) FROM " . ($view === 'profiles' ? 'enquiries' : 'profiles') . " WHERE status = 'new'")->fetchColumn();
+$vq = $view === 'profiles' ? 'view=profiles&' : '';
 
 $statuses = ['new', 'contacted', 'enrolled', 'not interested'];
 
-page_top('Enquiries');
-echo '<header><h1>GMATclap · Enquiries</h1><a class="btn light" href="?action=export">Download spreadsheet (CSV)</a>';
+page_top($view === 'profiles' ? 'Profile evaluations' : 'Enquiries');
+echo '<header><h1>GMATclap admin</h1><a class="btn light" href="?' . $vq . 'action=export">Download spreadsheet (CSV)</a>';
 echo '<form method="post"><input type="hidden" name="csrf" value="' . h($csrf) . '"><input type="hidden" name="action" value="logout"><button class="light">Log out</button></form></header><main>';
+$tab = fn(string $v, string $label) => '<a class="tab' . ($view === $v ? ' on' : '') . '" href="' . h($self) . ($v === 'profiles' ? '?view=profiles' : '') . '">' . $label . ($view !== $v && $otherNew > 0 ? ' <span class="badge">' . $otherNew . ' new</span>' : '') . '</a>';
+echo '<nav class="tabs">' . $tab('enquiries', 'Enquiries') . $tab('profiles', 'Profile evaluations') . '</nav>';
 if ($msg) echo '<div class="msg">' . h($msg) . '</div>';
 if ($err) echo '<div class="err">' . h($err) . '</div>';
 echo '<div class="stats" style="margin-bottom:16px"><div class="stat"><b>' . $counts['total'] . '</b>total</div><div class="stat"><b>' . $counts['new'] . '</b>new (not contacted)</div><div class="stat"><b>' . $counts['week'] . '</b>last 7 days</div></div>';
 
-echo '<form class="bar" method="get"><input name="q" placeholder="Search name, email, phone, city, query" value="' . h($q) . '"><select name="status"><option value="">All statuses</option>';
+echo '<form class="bar" method="get">' . ($view === 'profiles' ? '<input type="hidden" name="view" value="profiles">' : '') . '<input name="q" placeholder="Search name, email, phone, city, query" value="' . h($q) . '"><select name="status"><option value="">All statuses</option>';
 foreach ($statuses as $s) echo '<option' . ($fs === $s ? ' selected' : '') . '>' . h($s) . '</option>';
-echo '</select><button>Search</button>' . ($q !== '' || $fs !== '' ? ' <a href="' . h($self) . '">Clear</a>' : '') . '</form>';
+echo '</select><button>Search</button>' . ($q !== '' || $fs !== '' ? ' <a href="' . h($self) . ($view === 'profiles' ? '?view=profiles' : '') . '">Clear</a>' : '') . '</form>';
 
 if (!$rows) {
-    echo '<div class="card">No enquiries ' . ($q !== '' || $fs !== '' ? 'match this search.' : 'yet. New ones from the Enquiry and Contact Us forms will appear here.') . '</div>';
+    echo '<div class="card">No enquiries ' . ($q !== '' || $fs !== '' ? 'match this search.' : 'yet. ' . ($view === 'profiles' ? 'Requests from the Free Profile Evaluation page will appear here.' : 'New ones from the Enquiry and Contact Us forms will appear here.')) . '</div>';
 } else {
-    echo '<div class="tablewrap"><table><thead><tr><th>Date (IST)</th><th>Name</th><th>Contact</th><th>City</th><th>Query</th><th>Status</th><th></th></tr></thead><tbody>';
+    echo '<div class="tablewrap"><table><thead><tr><th>Date (IST)</th><th>Name</th><th>Contact</th><th>City</th><th>' . ($view === 'profiles' ? 'Profile' : 'Query') . '</th><th>Status</th><th></th></tr></thead><tbody>';
     foreach ($rows as $r) {
         $tel = preg_replace('/[^0-9+]/', '', $r['phone']);
         $wa = preg_replace('/[^0-9]/', '', $r['phone']);
         if (strlen($wa) === 10) $wa = '91' . $wa;
         echo '<tr>';
         echo '<td>' . h(date('d M Y', strtotime($r['created_at']))) . '<div class="muted">' . h(date('g:i a', strtotime($r['created_at']))) . '</div></td>';
-        echo '<td><b>' . h($r['name']) . '</b>' . ($r['source'] ? '<div class="muted">from ' . h($r['source']) . '</div>' : '') . '</td>';
+        echo '<td><b>' . h($r['name']) . '</b>' . (($r['source'] ?? '') !== '' ? '<div class="muted">from ' . h($r['source']) . '</div>' : '') . '</td>';
         echo '<td><a href="mailto:' . h($r['email']) . '">' . h($r['email']) . '</a><br><a href="tel:' . h($tel) . '">' . h($r['phone']) . '</a> · <a href="https://wa.me/' . h($wa) . '" target="_blank" rel="noopener">WhatsApp</a></td>';
         echo '<td>' . h($r['city']) . '</td>';
-        echo '<td class="q">' . h($r['queries']) . '</td>';
-        echo '<td><form method="post"><input type="hidden" name="csrf" value="' . h($csrf) . '"><input type="hidden" name="action" value="status"><input type="hidden" name="id" value="' . (int)$r['id'] . '">';
+        if ($view === 'profiles') {
+            $d = json_decode($r['data'], true) ?: [];
+            $sum = array_filter([
+                trim(($d['degree'] ?? '') . (($d['college'] ?? '') !== '' ? ', ' . $d['college'] : '')),
+                ($d['work_years'] ?? '') !== '' ? $d['work_years'] . ' yrs exp' . (($d['industry'] ?? '') !== '' ? ' · ' . $d['industry'] : '') : '',
+                ($d['gmat_status'] ?? '') !== '' ? 'GMAT: ' . $d['gmat_status'] . (($d['gmat_score'] ?? '') !== '' ? ' ' . $d['gmat_score'] : '') . (($d['target_score'] ?? '') !== '' ? ' (target ' . $d['target_score'] . ')' : '') : '',
+                $d['programs'] ?? '',
+                ($d['intake'] ?? '') !== '' ? 'Intake ' . $d['intake'] : '',
+            ], fn($x) => $x !== '');
+            echo '<td class="q">' . h(implode("\n", $sum)) . '<details><summary>All details</summary><table class="kv">';
+            foreach (PROFILE_FIELDS as $k => $label) {
+                if (($d[$k] ?? '') !== '' && !in_array($k, ['name', 'email', 'phone', 'city'], true)) {
+                    echo '<tr><th>' . h($label) . '</th><td>' . h((string)$d[$k]) . '</td></tr>';
+                }
+            }
+            echo '</table></details></td>';
+        } else {
+            echo '<td class="q">' . h($r['queries']) . '</td>';
+        }
+        echo '<td><form method="post"><input type="hidden" name="csrf" value="' . h($csrf) . '"><input type="hidden" name="view" value="' . $view . '"><input type="hidden" name="action" value="status"><input type="hidden" name="id" value="' . (int)$r['id'] . '">';
         echo '<select name="status" onchange="this.form.submit()" class="s-' . h(str_replace(' ', '.', $r['status'])) . '">';
         foreach ($statuses as $s) echo '<option' . ($r['status'] === $s ? ' selected' : '') . '>' . h($s) . '</option>';
         echo '</select></form></td>';
-        echo '<td><form method="post" onsubmit="return confirm(\'Delete this enquiry permanently?\')"><input type="hidden" name="csrf" value="' . h($csrf) . '"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="' . (int)$r['id'] . '"><button class="small light">Delete</button></form></td>';
+        echo '<td><form method="post" onsubmit="return confirm(\'Delete this permanently?\')"><input type="hidden" name="csrf" value="' . h($csrf) . '"><input type="hidden" name="view" value="' . $view . '"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="' . (int)$r['id'] . '"><button class="small light">Delete</button></form></td>';
         echo '</tr>';
     }
     echo '</tbody></table></div>';

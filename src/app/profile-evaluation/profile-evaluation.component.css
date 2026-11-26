@@ -1,0 +1,168 @@
+.pe-hero {
+  text-align: center;
+  padding: 36px 16px 12px;
+}
+
+.pe-hero h1 {
+  color: rgb(164, 18, 18);
+  font-weight: 700;
+}
+
+.pe-hero p {
+  color: #555;
+  max-width: 720px;
+  margin: 10px auto 0;
+}
+
+.pe-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 12px 16px 40px;
+}
+
+.pe-form,
+.pe-done {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+}
+
+.pe-done {
+  text-align: center;
+}
+
+.pe-done h2 {
+  color: rgb(164, 18, 18);
+}
+
+fieldset {
+  border: 0;
+  border-bottom: 1px solid #eee;
+  padding: 0 0 18px;
+  margin: 0 0 18px;
+}
+
+legend {
+  font-size: 18px;
+  font-weight: 700;
+  color: rgb(164, 18, 18);
+  margin-bottom: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px 18px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
+}
+
+input,
+select,
+textarea {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 9px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 400;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: #c62828;
+}
+
+.hint {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 6px 0 4px;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+}
+
+.check input {
+  width: auto;
+  margin: 0;
+}
+
+.consent {
+  align-items: flex-start;
+  margin: 4px 0 6px;
+}
+
+.consent input {
+  margin-top: 4px;
+}
+
+.err {
+  display: block;
+  color: #c62828;
+  font-weight: 400;
+  margin-top: 3px;
+}
+
+.err.big {
+  margin: 12px 0 0;
+  font-weight: 600;
+}
+
+.pe-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  background: rgb(164, 18, 18);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pe-btn[disabled] {
+  opacity: 0.7;
+}
+
+.pe-btn.light {
+  width: auto;
+  background: #fff;
+  color: rgb(164, 18, 18);
+  border: 1px solid rgb(164, 18, 18);
+  padding: 10px 18px;
+}
+
+.privacy {
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+  margin: 10px 0 0;
+}
+
+.pe-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}

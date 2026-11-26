@@ -18,6 +18,7 @@ import { StudentRegisterComponent } from './student-register/student-register.co
 import { UniversitiesComponent } from './universities/universities.component';
 import { AdminComponent } from './admin/admin.component';
 import { ResultsComponent } from './results/results.component';
+import { ProfileEvaluationComponent } from './profile-evaluation/profile-evaluation.component';
 // import { EnquiryComponent } from './enquiry/enquiry.component';
 
 
@@ -43,6 +44,7 @@ const routes: Routes = [
   {path: 'universities',component:UniversitiesComponent},
   {path: 'adminlogin',component:AdminComponent},
   {path: 'results', component:ResultsComponent},
+  {path: 'free-profile-evaluation', component:ProfileEvaluationComponent},
   
   
   

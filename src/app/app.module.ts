@@ -29,6 +29,7 @@ import { UniversitiesComponent } from './universities/universities.component';
 import { AdminComponent } from './admin/admin.component';
 import { ResultsComponent } from './results/results.component';
 import { ResultsGridComponent } from './results/results-grid.component';
+import { ProfileEvaluationComponent } from './profile-evaluation/profile-evaluation.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { ResultsGridComponent } from './results/results-grid.component';
     UniversitiesComponent,
     AdminComponent,
     ResultsComponent,
-    ResultsGridComponent
+    ResultsGridComponent,
+    ProfileEvaluationComponent
   ],
   imports: [
     BrowserModule,

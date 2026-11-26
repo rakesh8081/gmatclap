@@ -1,0 +1,166 @@
+<app-header></app-header>
+
+<section class="pe-hero">
+  <h1>Free MBA Profile Evaluation</h1>
+  <p>
+    Tell us about your background and goals. Raaj Tomar (IIM Ahmedabad, 15+ years of MBA admissions and GMAT
+    coaching) will review your profile and suggest a GMAT target, a B-school shortlist and next steps.
+  </p>
+</section>
+
+<div class="pe-wrap">
+  <div class="pe-done" *ngIf="done">
+    <h2>Thank you!</h2>
+    <p>We have your profile. Raaj will review it and get back to you, usually within 2 working days.</p>
+    <p>Need to talk sooner? Call or WhatsApp <a href="tel:+916301696274">6301-696274</a>.</p>
+    <button type="button" class="pe-btn light" (click)="startAgain()">Submit another profile</button>
+  </div>
+
+  <form *ngIf="!done" #f="ngForm" (ngSubmit)="submit(f)" novalidate class="pe-form">
+    <!-- hidden field for spam bots; people never see it -->
+    <input type="text" name="website" [(ngModel)]="form.website" class="pe-trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <fieldset>
+      <legend>About you</legend>
+      <div class="grid">
+        <label>Full name *
+          <input name="name" [(ngModel)]="form.name" #name="ngModel" required maxlength="120" autocomplete="name" />
+          <small class="err" *ngIf="name.invalid && name.touched">Please enter your name.</small>
+        </label>
+        <label>Email *
+          <input name="email" type="email" [(ngModel)]="form.email" #email="ngModel" required email maxlength="160" autocomplete="email" />
+          <small class="err" *ngIf="email.invalid && email.touched">Please enter a valid email.</small>
+        </label>
+        <label>Phone / WhatsApp *
+          <input name="phone" type="tel" [(ngModel)]="form.phone" #phone="ngModel" required pattern="^\+?[0-9][0-9 ()\-]{6,24}$" autocomplete="tel" />
+          <small class="err" *ngIf="phone.invalid && phone.touched">Please enter a valid phone number.</small>
+        </label>
+        <label>City
+          <input name="city" [(ngModel)]="form.city" maxlength="80" autocomplete="address-level2" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Education</legend>
+      <div class="grid">
+        <label>Degree
+          <select name="degree" [(ngModel)]="form.degree">
+            <option value="">Select</option>
+            <option *ngFor="let d of degrees" [value]="d">{{ d }}</option>
+          </select>
+        </label>
+        <label>College / university
+          <input name="college" [(ngModel)]="form.college" maxlength="160" />
+        </label>
+        <label>Graduation year
+          <input name="grad_year" [(ngModel)]="form.grad_year" #gy="ngModel" inputmode="numeric" pattern="^(19|20)[0-9]{2}$" placeholder="e.g. 2021" />
+          <small class="err" *ngIf="gy.invalid && gy.touched">Use a year like 2021.</small>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Work experience</legend>
+      <div class="grid">
+        <label>Years of full-time work
+          <select name="work_years" [(ngModel)]="form.work_years">
+            <option value="">Select</option>
+            <option *ngFor="let w of workYears" [value]="w">{{ w }}</option>
+          </select>
+        </label>
+        <label>Current role and company
+          <input name="role" [(ngModel)]="form.role" maxlength="160" placeholder="e.g. Analyst, TCS" />
+        </label>
+        <label>Industry
+          <select name="industry" [(ngModel)]="form.industry">
+            <option value="">Select</option>
+            <option *ngFor="let i of industries" [value]="i">{{ i }}</option>
+          </select>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>GMAT</legend>
+      <div class="grid">
+        <label>Where are you with the GMAT?
+          <select name="gmat_status" [(ngModel)]="form.gmat_status">
+            <option value="">Select</option>
+            <option value="Not started">Not started</option>
+            <option value="Preparing">Preparing</option>
+            <option value="Taken">Already taken</option>
+          </select>
+        </label>
+        <label *ngIf="form.gmat_status === 'Taken'">Your GMAT score
+          <input name="gmat_score" [(ngModel)]="form.gmat_score" #gs="ngModel" inputmode="numeric" pattern="^[2-8][0-9]{2}$" placeholder="205–805" />
+          <small class="err" *ngIf="gs.invalid && gs.touched">Scores range from 205 to 805.</small>
+        </label>
+        <label>Target score
+          <input name="target_score" [(ngModel)]="form.target_score" #ts="ngModel" inputmode="numeric" pattern="^[2-8][0-9]{2}$" placeholder="e.g. 705" />
+          <small class="err" *ngIf="ts.invalid && ts.touched">Scores range from 205 to 805.</small>
+        </label>
+        <label>Planned test month
+          <input name="test_date" type="month" [(ngModel)]="form.test_date" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Your goals</legend>
+      <p class="hint">Programs you are considering</p>
+      <div class="checks">
+        <label class="check" *ngFor="let p of programOptions">
+          <input type="checkbox" [checked]="isChecked('programs', p)" (change)="toggle('programs', p, $any($event.target).checked)" />
+          {{ p }}
+        </label>
+      </div>
+      <p class="hint">Where would you like to study?</p>
+      <div class="checks">
+        <label class="check" *ngFor="let c of countryOptions">
+          <input type="checkbox" [checked]="isChecked('countries', c)" (change)="toggle('countries', c, $any($event.target).checked)" />
+          {{ c }}
+        </label>
+      </div>
+      <div class="grid">
+        <label>Target schools (if any)
+          <input name="schools" [(ngModel)]="form.schools" maxlength="300" placeholder="e.g. ISB, IIM A PGPX, INSEAD" />
+        </label>
+        <label>Target intake
+          <select name="intake" [(ngModel)]="form.intake">
+            <option value="">Select</option>
+            <option *ngFor="let i of intakes" [value]="i">{{ i }}</option>
+          </select>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>How can we help?</legend>
+      <div class="checks">
+        <label class="check" *ngFor="let s of serviceOptions">
+          <input type="checkbox" [checked]="isChecked('services', s)" (change)="toggle('services', s, $any($event.target).checked)" />
+          {{ s }}
+        </label>
+      </div>
+      <label>Anything else we should know?
+        <textarea name="notes" [(ngModel)]="form.notes" rows="4" maxlength="3000" placeholder="Career goals, gaps, concerns, questions"></textarea>
+      </label>
+    </fieldset>
+
+    <label class="check consent">
+      <input type="checkbox" name="consent" [(ngModel)]="form.consent" #consent="ngModel" required />
+      I agree to be contacted by GMATclap by phone, WhatsApp or email about my profile. *
+    </label>
+    <small class="err" *ngIf="consent.invalid && consent.touched">Please tick this box so we can contact you.</small>
+
+    <p class="err big" *ngIf="error">{{ error }}</p>
+
+    <button type="submit" class="pe-btn" [disabled]="sending">
+      {{ sending ? 'Sending…' : 'Get my free profile evaluation' }}
+    </button>
+    <p class="privacy">We use these details only to evaluate your profile. See our <a href="/privacy-policy">privacy policy</a>.</p>
+  </form>
+</div>
+
+<app-footer></app-footer>
