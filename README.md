@@ -56,3 +56,11 @@ Never delete `domains/gmatclap.com/gmatclap-data/` – it holds all enquiries.
 - Nov 2026: PHP enquiry backend + admin page added, forms fixed, hard-coded admin password removed from the frontend, gmatclap.in redirected to gmatclap.com.
 
 The live `main-P3ADUMPJ.js` on the server was patched directly (2026-11-26) to use `/api/enquiry.php`, because the site could not be rebuilt at the time. The next `ng build` from this repo replaces it with the same fix built in.
+
+## Blog
+
+Posts live in `src/app/blog/blog.data.ts` (newest first). To add one, copy an entry, give it a new `slug` (becomes `gmatclap.com/blog/<slug>`), write the body in simple HTML and push to `main`. The build pre-renders every post as its own page.
+
+## Results
+
+Student results live in `src/app/results/results.data.ts`; photos go in `src/assets/images/results/` (square jpg, about 360×360). A result without a photo shows the student's initials.

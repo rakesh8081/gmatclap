@@ -31,6 +31,11 @@ jobs:
 
       - run: npm ci
 
+      - name: List blog posts to pre-render
+        run: |
+          grep -oP "^\s*slug: '\K[a-z0-9-]+" src/app/blog/blog.data.ts | sed 's#^#/blog/#' > prerender-routes.txt
+          cat prerender-routes.txt
+
       - name: Build Angular (pre-renders every page)
         run: npx ng build --configuration production
 
@@ -49,6 +54,8 @@ jobs:
           test -f out/results/index.html
           test -f out/free-profile-evaluation/index.html
           test -f out/api/profile.php
+          test -f out/blog/index.html
+          for r in $(cat prerender-routes.txt); do test -f "out$r/index.html" || { echo "missing pre-rendered $r"; exit 1; }; done
           test -f out/api/enquiry.php
           if grep -rl "localhost:8080/enquiries" out; then echo "Enquiry form still points at localhost"; exit 1; fi
           echo "Files to publish:"; find out -maxdepth 2 | sort | head -80

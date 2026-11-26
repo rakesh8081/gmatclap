@@ -1,0 +1,116 @@
+.post {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 18px 40px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: #222;
+}
+
+.crumbs a {
+  color: rgb(164, 18, 18);
+  font-size: 15px;
+}
+
+.post h1 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 8px 0 6px;
+}
+
+.meta {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* Post body comes from [innerHTML], so style it through ::ng-deep */
+.content ::ng-deep h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: rgb(164, 18, 18);
+  margin: 28px 0 10px;
+}
+
+.content ::ng-deep h3 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 20px 0 8px;
+}
+
+.content ::ng-deep p,
+.content ::ng-deep ul {
+  margin: 0 0 14px;
+}
+
+.content ::ng-deep ul {
+  padding-left: 22px;
+}
+
+.content ::ng-deep a {
+  color: rgb(164, 18, 18);
+  text-decoration: underline;
+}
+
+.content ::ng-deep table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 16px;
+  font-size: 15px;
+}
+
+.content ::ng-deep th,
+.content ::ng-deep td {
+  border: 1px solid #e3e3e3;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.content ::ng-deep th {
+  background: rgb(164, 18, 18);
+  color: #fff;
+}
+
+.cta {
+  background: #f7f2f2;
+  border-radius: 12px;
+  padding: 22px;
+  margin: 32px 0 24px;
+  text-align: center;
+}
+
+.cta h2 {
+  font-size: 21px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.btn-red,
+.btn-light {
+  display: inline-block;
+  margin: 8px 6px 0;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-red {
+  background: rgb(164, 18, 18);
+  color: #fff;
+}
+
+.btn-light {
+  border: 1px solid rgb(164, 18, 18);
+  color: rgb(164, 18, 18);
+}
+
+.more h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.more a {
+  color: rgb(164, 18, 18);
+}

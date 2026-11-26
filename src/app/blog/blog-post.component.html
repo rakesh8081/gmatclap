@@ -1,0 +1,31 @@
+<app-header></app-header>
+
+<article class="post" *ngIf="post; else notFound">
+  <p class="crumbs"><a href="/blog">← All posts</a></p>
+  <h1>{{ post.title }}</h1>
+  <p class="meta">{{ post.date | date: 'd MMMM y' }} · {{ post.author }}</p>
+  <div class="content" [innerHTML]="post.body"></div>
+
+  <aside class="cta">
+    <h2>Preparing for the GMAT or an MBA?</h2>
+    <p>Get a free profile evaluation or attend a free demo class.</p>
+    <a class="btn-red" href="/free-profile-evaluation">Free profile evaluation</a>
+    <a class="btn-light" href="/enquiry">Book a demo class</a>
+  </aside>
+
+  <section class="more" *ngIf="more.length">
+    <h2>More from the blog</h2>
+    <ul>
+      <li *ngFor="let m of more"><a [href]="'/blog/' + m.slug">{{ m.title }}</a></li>
+    </ul>
+  </section>
+</article>
+
+<ng-template #notFound>
+  <div class="post">
+    <h1>Post not found</h1>
+    <p>This post may have moved. <a href="/blog">See all posts</a>.</p>
+  </div>
+</ng-template>
+
+<app-footer></app-footer>

@@ -19,6 +19,7 @@ import { UniversitiesComponent } from './universities/universities.component';
 import { AdminComponent } from './admin/admin.component';
 import { ResultsComponent } from './results/results.component';
 import { ProfileEvaluationComponent } from './profile-evaluation/profile-evaluation.component';
+import { BlogPostComponent } from './blog/blog-post.component';
 // import { EnquiryComponent } from './enquiry/enquiry.component';
 
 
@@ -29,6 +30,7 @@ const routes: Routes = [
   {path: 'about',component:AboutComponent},
   {path: 'admission',component:AdmissionComponent},
   {path: 'blog',component:BlogComponent},
+  {path: 'blog/:slug', component:BlogPostComponent},
   
   {path: 'home',component:HomeComponent},
   {path: 'gmatofferings',component:GmatofferingsComponent},

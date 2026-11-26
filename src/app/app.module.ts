@@ -30,6 +30,7 @@ import { AdminComponent } from './admin/admin.component';
 import { ResultsComponent } from './results/results.component';
 import { ResultsGridComponent } from './results/results-grid.component';
 import { ProfileEvaluationComponent } from './profile-evaluation/profile-evaluation.component';
+import { BlogPostComponent } from './blog/blog-post.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { ProfileEvaluationComponent } from './profile-evaluation/profile-evaluat
     AdminComponent,
     ResultsComponent,
     ResultsGridComponent,
-    ProfileEvaluationComponent
+    ProfileEvaluationComponent,
+    BlogPostComponent
   ],
   imports: [
     BrowserModule,
