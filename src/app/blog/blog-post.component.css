@@ -129,3 +129,11 @@
   margin: 0 6px 4px 0;
   text-decoration: none;
 }
+
+.content ::ng-deep img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 8px 0 20px;
+}

@@ -1,3 +1,14 @@
+---
+title: "Why great MBA essays aren't perfect — they're personal"
+date: 2026-11-27
+author: GMATclap
+topics: [mba-essay, mba]
+summary: The essays that impress admissions committees aren't the most polished. They're the ones that reveal the person behind the profile. Here is how to write one.
+image: images/blog/why-great-mba-essays-are-personal.jpg
+---
+
+![Why great MBA essays aren't perfect — they're personal](/assets/images/blog/why-great-mba-essays-are-personal.jpg)
+
 **The essays that impress admissions committees aren't always the most polished. They're the ones that reveal the person behind the profile.**
 
 Every MBA applicant has achievements worth talking about.
@@ -364,7 +375,3 @@ And when your essay succeeds in doing that, it becomes much more than an applica
 **GMATclap | Your Study Abroad Partner** MBA Admissions Consulting | Essay Strategy | Profile Building | Interview Preparation
 
 📩 [**gmatclap@gmail.com**](mailto:gmatclap@gmail.com) 📞 +91 6301-696274
-
----
-
-![Why Great MBA Essays Aren't Perfect — They're Personal](MBA_Essay_Guidance.png)
