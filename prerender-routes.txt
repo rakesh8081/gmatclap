@@ -13,6 +13,7 @@
 /blog/topic/asia
 /blog/topic/singapore
 /blog/topic/indian-b-schools
+/blog/topic/mba
 /blog/topic/one-year-mba
 /blog/topic/executive-mba
 /blog/topic/deferred-mba
@@ -25,3 +26,5 @@
 /blog/topic/finance
 /blog/topic/consulting
 /blog/topic/technology
+/blog/topic/marketing
+/blog/topic/others

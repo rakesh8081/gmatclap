@@ -22,6 +22,7 @@ export const TOPICS: BlogTopic[] = [
   { topic: 'asia', name: 'Asia', group: 'Universities' },
   { topic: 'singapore', name: 'Singapore', group: 'Universities' },
   { topic: 'indian-b-schools', name: 'Indian B-schools', group: 'Universities' },
+  { topic: 'mba', name: 'MBA', group: 'Programs' },
   { topic: 'one-year-mba', name: 'One-year MBA', group: 'Programs' },
   { topic: 'executive-mba', name: 'Executive MBA', group: 'Programs' },
   { topic: 'deferred-mba', name: 'Deferred MBA', group: 'Programs' },
@@ -34,6 +35,8 @@ export const TOPICS: BlogTopic[] = [
   { topic: 'finance', name: 'Finance', group: 'Careers' },
   { topic: 'consulting', name: 'Consulting', group: 'Careers' },
   { topic: 'technology', name: 'Technology', group: 'Careers' },
+  { topic: 'marketing', name: 'Marketing', group: 'Careers' },
+  { topic: 'others', name: 'Others', group: 'Careers' },
 ];
 
 export const TOPIC_GROUPS = ['GMAT & tests', 'Universities', 'Programs', 'Applications', 'Careers'];

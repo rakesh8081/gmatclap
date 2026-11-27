@@ -24,9 +24,9 @@ HOW TO USE THIS TEMPLATE (this grey block is not shown on the website)
               gmatprep-quant, gmatprep-verbal, gmatprep-di, executive-assessment, gmat-waiver,
               us-universities, uk-universities, europe-universities, canada-universities,
               asia, singapore, indian-b-schools,
-              one-year-mba, executive-mba, deferred-mba, mim, phd,
+              mba, one-year-mba, executive-mba, deferred-mba, mim, phd,
               mba-essay, scholarship, admission-consulting-faq, success-story,
-              finance, consulting, technology
+              finance, consulting, technology, marketing, others
    summary  one or two sentences
    image    optional picture shown on the blog list; upload it to src/assets/images/blog/
             first, then write images/blog/<file name>. Delete the line if there is no picture.
