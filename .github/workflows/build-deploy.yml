@@ -34,6 +34,7 @@ jobs:
       - name: List blog posts to pre-render
         run: |
           grep -oP "^\s*slug: '\K[a-z0-9-]+" src/app/blog/blog.data.ts | sed 's#^#/blog/#' > prerender-routes.txt
+          grep -oP "^\s*\{ topic: '\K[a-z0-9-]+" src/app/blog/blog.data.ts | sed 's#^#/blog/topic/#' >> prerender-routes.txt
           cat prerender-routes.txt
 
       - name: Build Angular (pre-renders every page)

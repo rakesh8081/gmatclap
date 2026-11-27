@@ -1,14 +1,52 @@
 // GMATclap blog posts. Newest first.
 //
-// To add a post: copy one entry, give it a new unique `slug` (lower-case words joined by
+// To add a post: copy one entry (choose its topics from TOPICS below), give it a new unique `slug` (lower-case words joined by
 // hyphens; it becomes the address gmatclap.com/blog/<slug>), fill in the fields and write
 // the body in simple HTML (<p>, <h2>, <ul>/<li>, <strong>, <a>). Push to main and it goes live.
+
+export interface BlogTopic {
+  topic: string; // used in the address: gmatclap.com/blog/topic/<topic>
+  name: string;
+  group: string;
+}
+
+// Blog topics, shown as filters on /blog. Each one has its own page.
+// Keep the "{ topic: '" format on one line: the build reads it to pre-render topic pages.
+export const TOPICS: BlogTopic[] = [
+  { topic: 'gmatprep-quant', name: 'GMATprep Quant', group: 'GMAT & tests' },
+  { topic: 'gmatprep-verbal', name: 'GMATprep Verbal', group: 'GMAT & tests' },
+  { topic: 'gmatprep-di', name: 'GMATprep DI', group: 'GMAT & tests' },
+  { topic: 'executive-assessment', name: 'Executive Assessment (EA)', group: 'GMAT & tests' },
+  { topic: 'gmat-waiver', name: 'GMAT waiver', group: 'GMAT & tests' },
+  { topic: 'us-universities', name: 'US universities', group: 'Universities' },
+  { topic: 'uk-universities', name: 'UK universities', group: 'Universities' },
+  { topic: 'europe-universities', name: 'Europe universities', group: 'Universities' },
+  { topic: 'canada-universities', name: 'Canada universities', group: 'Universities' },
+  { topic: 'asia', name: 'Asia', group: 'Universities' },
+  { topic: 'singapore', name: 'Singapore', group: 'Universities' },
+  { topic: 'indian-b-schools', name: 'Indian B-schools', group: 'Universities' },
+  { topic: 'one-year-mba', name: 'One-year MBA', group: 'Programs' },
+  { topic: 'executive-mba', name: 'Executive MBA', group: 'Programs' },
+  { topic: 'deferred-mba', name: 'Deferred MBA', group: 'Programs' },
+  { topic: 'mim', name: 'MiM', group: 'Programs' },
+  { topic: 'phd', name: 'PhD', group: 'Programs' },
+  { topic: 'mba-essay', name: 'MBA essay', group: 'Applications' },
+  { topic: 'scholarship', name: 'Scholarship', group: 'Applications' },
+  { topic: 'admission-consulting-faq', name: 'Admission consulting FAQ', group: 'Applications' },
+  { topic: 'success-story', name: 'Success story', group: 'Applications' },
+  { topic: 'finance', name: 'Finance', group: 'Careers' },
+  { topic: 'consulting', name: 'Consulting', group: 'Careers' },
+  { topic: 'technology', name: 'Technology', group: 'Careers' },
+];
+
+export const TOPIC_GROUPS = ['GMAT & tests', 'Universities', 'Programs', 'Applications', 'Careers'];
 
 export interface BlogPost {
   slug: string;
   title: string;
   date: string; // YYYY-MM-DD
   author: string;
+  topics: string[]; // values from TOPICS[].topic
   summary: string; // one or two sentences for the blog list and Google
   image?: string; // optional, path under assets/images/
   body: string; // HTML
@@ -20,6 +58,7 @@ export const POSTS: BlogPost[] = [
     title: 'GMATclap results 2026: scores up to 750 and admits to HBS, HEC Paris, NTU and ISB',
     date: '2026-11-26',
     author: 'GMATclap',
+    topics: ['success-story'],
     summary:
       'Our students scored between 675 and 750 on the GMAT and won admits to Harvard Business School, HEC Paris, NTU Singapore and ISB.',
     image: 'images/results/shreeya-singh.jpg',
@@ -58,6 +97,7 @@ export const POSTS: BlogPost[] = [
     title: 'GMAT Focus Edition explained: sections, timing and scoring',
     date: '2026-11-26',
     author: 'GMATclap',
+    topics: ['gmatprep-quant', 'gmatprep-verbal', 'gmatprep-di'],
     summary:
       'Three sections, 64 questions, 2 hours 15 minutes and a score from 205 to 805. Here is what is on the GMAT Focus Edition and how it is scored.',
     body: `
@@ -118,6 +158,7 @@ export const POSTS: BlogPost[] = [
     title: 'How we teach GMAT: the D-C-A-T method',
     date: '2026-11-26',
     author: 'Raaj Tomar',
+    topics: ['gmatprep-quant', 'gmatprep-verbal', 'gmatprep-di'],
     summary:
       'Demo and Diagnosis, Concept, Application, Test. The four-step method behind every GMATclap class, and why it works.',
     body: `
@@ -153,4 +194,12 @@ export const POSTS: BlogPost[] = [
 
 export function findPost(slug: string | null): BlogPost | undefined {
   return POSTS.find((p) => p.slug === slug);
+}
+
+export function findTopic(topic: string | null): BlogTopic | undefined {
+  return TOPICS.find((t) => t.topic === topic);
+}
+
+export function topicsOf(post: BlogPost): BlogTopic[] {
+  return post.topics.map((t) => findTopic(t)).filter((t): t is BlogTopic => !!t);
 }

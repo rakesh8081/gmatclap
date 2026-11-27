@@ -1,11 +1,36 @@
 <app-header></app-header>
 
 <section class="blog-hero">
-  <h1>GMATclap Blog</h1>
-  <p>GMAT Focus Edition preparation, MBA admissions advice and our students' results.</p>
+  <h1 *ngIf="!topic">GMATclap Blog</h1>
+  <h1 *ngIf="topic">{{ topic.name }}</h1>
+  <p *ngIf="!topic">GMAT preparation, universities, programs, applications and careers.</p>
+  <p *ngIf="topic"><a href="/blog">← All posts</a></p>
 </section>
 
+<nav class="topics" aria-label="Blog topics">
+  <div class="group" *ngFor="let g of groups">
+    <span class="group-name">{{ g.name }}</span>
+    <a
+      *ngFor="let t of g.topics"
+      class="chip"
+      [class.on]="topic?.topic === t.topic"
+      [href]="'/blog/topic/' + t.topic"
+      >{{ t.name }}<span class="n" *ngIf="count(t)">{{ count(t) }}</span></a
+    >
+  </div>
+</nav>
+
 <div class="blog-list">
+  <p class="empty" *ngIf="unknownTopic">This topic doesn't exist. <a href="/blog">See all posts</a>.</p>
+
+  <div class="empty" *ngIf="topic && !posts.length">
+    <p>No articles on <strong>{{ topic.name }}</strong> yet. They're coming soon.</p>
+    <p>
+      Have a question about {{ topic.name }} right now? <a href="/enquiry">Ask us</a> or get a
+      <a href="/free-profile-evaluation">free profile evaluation</a>.
+    </p>
+  </div>
+
   <article class="post-card" *ngFor="let p of posts">
     <a [href]="'/blog/' + p.slug" class="thumb" *ngIf="p.image" tabindex="-1" aria-hidden="true">
       <img [src]="'assets/' + p.image" alt="" loading="lazy" />
@@ -14,6 +39,9 @@
       <p class="meta">{{ p.date | date: 'd MMMM y' }} · {{ p.author }}</p>
       <h2><a [href]="'/blog/' + p.slug">{{ p.title }}</a></h2>
       <p class="summary">{{ p.summary }}</p>
+      <p class="tags">
+        <a *ngFor="let t of topicsOf(p)" class="tag" [href]="'/blog/topic/' + t.topic">{{ t.name }}</a>
+      </p>
       <a [href]="'/blog/' + p.slug" class="more">Read more →</a>
     </div>
   </article>

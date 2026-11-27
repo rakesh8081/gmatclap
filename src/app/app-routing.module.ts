@@ -30,6 +30,7 @@ const routes: Routes = [
   {path: 'about',component:AboutComponent},
   {path: 'admission',component:AdmissionComponent},
   {path: 'blog',component:BlogComponent},
+  {path: 'blog/topic/:topic', component:BlogComponent},
   {path: 'blog/:slug', component:BlogPostComponent},
   
   {path: 'home',component:HomeComponent},

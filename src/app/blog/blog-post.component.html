@@ -4,6 +4,9 @@
   <p class="crumbs"><a href="/blog">← All posts</a></p>
   <h1>{{ post.title }}</h1>
   <p class="meta">{{ post.date | date: 'd MMMM y' }} · {{ post.author }}</p>
+  <p class="tags">
+    <a *ngFor="let t of topics" class="tag" [href]="'/blog/topic/' + t.topic">{{ t.name }}</a>
+  </p>
   <div class="content" [innerHTML]="post.body"></div>
 
   <aside class="cta">

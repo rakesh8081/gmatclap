@@ -59,8 +59,10 @@ The live `main-P3ADUMPJ.js` on the server was patched directly (2026-11-26) to u
 
 ## Blog
 
-Posts live in `src/app/blog/blog.data.ts` (newest first). To add one, copy an entry, give it a new `slug` (becomes `gmatclap.com/blog/<slug>`), write the body in simple HTML and push to `main`. The build pre-renders every post as its own page.
+Posts live in `src/app/blog/blog.data.ts` (newest first). To add one, copy an entry, pick its `topics` from the `TOPICS` list in the same file, give it a new `slug` (becomes `gmatclap.com/blog/<slug>`), write the body in simple HTML and push to `main`. The build pre-renders every post as its own page.
 
 ## Results
 
 Student results live in `src/app/results/results.data.ts`; photos go in `src/assets/images/results/` (square jpg, about 360×360). A result without a photo shows the student's initials.
+
+Topics (GMATprep Quant, US universities, Deferred MBA, and so on) are listed in `TOPICS` in the same file. Each has a page at `gmatclap.com/blog/topic/<topic>`; topics with no posts yet show a "coming soon" note.
