@@ -31,11 +31,10 @@ jobs:
 
       - run: npm ci
 
-      - name: List blog posts to pre-render
+      - name: Build blog posts from content/blog
         run: |
-          grep -oP "^\s*slug: '\K[a-z0-9-]+" src/app/blog/blog.data.ts | sed 's#^#/blog/#' > prerender-routes.txt
-          grep -oP "^\s*\{ topic: '\K[a-z0-9-]+" src/app/blog/blog.data.ts | sed 's#^#/blog/topic/#' >> prerender-routes.txt
-          cat prerender-routes.txt
+          pip install --quiet markdown pyyaml
+          python3 scripts/build_blog.py
 
       - name: Build Angular (pre-renders every page)
         run: npx ng build --configuration production
